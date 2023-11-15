@@ -3,3 +3,5 @@ This is because these are the only years that the Portland Police Department has
 entire year. Because I am attempting to find correlations between weather and the types of calls-for-service, I need an 
 entire year's data. If, for example, I don't have the data for the winter for one year, that may impact how well I can
 predict how calls-for-service is affected for similar weather patterns.
+
+Data Source: https://nij.ojp.gov/funding/real-time-crime-forecasting-challenge-posting#data
