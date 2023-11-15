@@ -4,4 +4,5 @@ entire year. Because I am attempting to find correlations between weather and th
 entire year's data. If, for example, I don't have the data for the winter for one year, that may impact how well I can
 predict how calls-for-service is affected for similar weather patterns.
 
-Data Source: https://nij.ojp.gov/funding/real-time-crime-forecasting-challenge-posting#data
+Calls-for-Service: https://nij.ojp.gov/funding/real-time-crime-forecasting-challenge-posting#data
+Weather: https://www.ncei.noaa.gov/cdo-web/datasets#GHCND
