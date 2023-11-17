@@ -15,15 +15,17 @@ def ImportRawData() -> pd.DataFrame:
 
 def ImportCleanData() -> pd.DataFrame:
     print("Beginning the process of importing clean data...")
-    cleanData = __processCleanData()
+    cleanData = pd.read_csv(GlobalConfigs.CLEANED_DATA_FILEPATH)
     print("Completed the process of importing clean data.")
 
     return cleanData
 
-def __processCleanData() -> pd.DataFrame:
-    print("Reading in clean data...")
-    retData = pd.read_csv(GlobalConfigs.CLEAN_DATA_FILEPATH)
-    return retData
+def ImportNormalizedData() -> pd.DataFrame:
+    print("Beginning the process of importing normalized data...")
+    normalizedData = pd.read_csv(GlobalConfigs.NORMALIZED_DATA_FILEPATH)
+    print("Completed the process of importing normalized data.")
+
+    return normalizedData
 
 def __processCallsForServiceData() -> pd.DataFrame:
     print("Reading in Calls-for-Service data...")

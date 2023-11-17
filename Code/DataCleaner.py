@@ -32,4 +32,4 @@ def __cleanAllText(data:pd.DataFrame) -> pd.DataFrame:
 
 def __saveCleanData(data:pd.DataFrame):
     print("Saving cleaned data...")
-    data.to_csv(GlobalConfigs.CLEAN_DATA_FILEPATH)
+    data.to_csv(GlobalConfigs.CLEANED_DATA_FILEPATH)

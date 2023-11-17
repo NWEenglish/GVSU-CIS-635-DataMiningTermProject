@@ -1,2 +1,3 @@
 RAW_DATA_FOLDER = "./Raw Data/"
-CLEAN_DATA_FILEPATH = "./Clean Data/CleanData.csv"
+CLEANED_DATA_FILEPATH = "./Clean Data/CleanData.csv"
+NORMALIZED_DATA_FILEPATH = "./Normalized Data/NormalizedData.csv"
