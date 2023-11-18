@@ -1,16 +1,16 @@
 import pandas as pd
 import DataLoader
 import DataCleaner
-import DataInterpolatorAndNormalizer
+import DataNormalizer
 
 def __printOptions():
     print('')
     print("Processing Options:")
     print("0 - Exit")
     print("1 - Import Raw Data")
-    print("2 - Clean and Save Raw Data")
+    print("2 - Clean, Interpolate, and Save Raw Data")
     print("3 - Import Cleaned Data")
-    print("4 - Interpolate, Normalize, and Save Cleaned Data")
+    print("4 - Normalize and Save Cleaned Data") 
     print("5 - Import Normalized Data")
     print('')
 
@@ -19,21 +19,25 @@ def getInput():
 
 if (__name__ == "__main__"):
     userInput:str = None
-    rawData = pd.DataFrame()
+    rawData = dict[str, pd.DataFrame]
     cleanData = pd.DataFrame()
     normalizedData = pd.DataFrame()
 
-    while (userInput != '0'):
+    while (True):
         __printOptions()
         userInput = getInput()
 
+        # Exit processing
+        if (userInput == '0'):
+            break
+
         # Imports raw data
-        if (userInput == '1'):
+        elif (userInput == '1'):
             rawData = DataLoader.ImportRawData()
 
-        # Clean and save data
+        # Clean, interpolate, combine, and save data
         elif (userInput == '2'):
-            if (rawData.empty):
+            if (not rawData or any(df.empty for df in rawData.values())):
                 print("No raw data has been previously loaded.")
             else:
                 cleanData = DataCleaner.CleanData(rawData)
@@ -42,12 +46,12 @@ if (__name__ == "__main__"):
         elif (userInput == '3'):
             cleanData = DataLoader.ImportCleanData()
 
-        # Interpolate, normalize, and save cleaned data
+        # Normalize and save cleaned data
         elif (userInput == '4'):
             if (cleanData.empty):
                 print("No cleaned data has been previously loaded.")
             else:
-                normalizedData = DataInterpolatorAndNormalizer.InterpolateAndNormalizeData(cleanData)
+                normalizedData = DataNormalizer.NormalizeData(cleanData)
 
         # Import normalized data
         elif (userInput == '5'):

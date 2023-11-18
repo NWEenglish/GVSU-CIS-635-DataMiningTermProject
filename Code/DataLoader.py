@@ -2,16 +2,14 @@ import pandas as pd
 import os
 import GlobalConfigs
 
-def ImportRawData() -> pd.DataFrame:
+def ImportRawData() -> dict[str, pd.DataFrame]:
     print("Beginning the process of importing raw data...")
 
-    cfsData = __processCallsForServiceData()
-    wData = __processWeatherData()
-    joinedData = __joinDataTables(cfsData, wData)
+    rawData = dict(callsForService = __processCallsForServiceData(), weather = __processWeatherData())
 
     print("Completed the process of importing raw data.")
 
-    return joinedData
+    return rawData
 
 def ImportCleanData() -> pd.DataFrame:
     print("Beginning the process of importing clean data...")
@@ -42,14 +40,3 @@ def __processWeatherData() -> pd.DataFrame:
     print("Reading in Weather data...")
     retData = pd.read_csv(GlobalConfigs.RAW_DATA_FOLDER + "NOAA_Weather.csv")
     return retData
-
-def __joinDataTables(callsForServiceData:pd.DataFrame, weatherData:pd.DataFrame):
-    print("Merging data...")
-
-    # Convert dates in data frames to a consistent format
-    callsForServiceData["occ_date"] = pd.to_datetime(callsForServiceData["occ_date"], format="%m/%d/%Y")
-    weatherData["DATE"] = pd.to_datetime(weatherData["DATE"], format="%Y-%m-%d")
-
-    combinedData = callsForServiceData.set_index("occ_date").join(weatherData.set_index("DATE"), how="inner")
-    combinedData.index.name = "Date"
-    return combinedData
