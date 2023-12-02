@@ -16,8 +16,6 @@ def CleanData(rawData:dict[str, pd.DataFrame]) -> pd.DataFrame:
     # Merge
     cleanData = __joinDataTables(interpolatedCallsForServiceData, interpolatedWeatherData)
 
-    cleanData.to_csv('Test.csv')
-
     # Clean
     cleanData = __removeUnnecessaryColumns(cleanData)
     cleanData = __cleanAllText(cleanData)
@@ -32,7 +30,9 @@ def __binData(data:pd.DataFrame) -> pd.DataFrame:
 
     # Bin by day, and then by case decription
     retData = __cleanAllText(data)
-    retData = retData.groupby(['occ_date', 'CASE DESC']).size().reset_index(name='Case Count')    
+    retData = retData.groupby(['occ_date', 'CASE DESC']).size().reset_index(name='Case Count')
+    retData.set_index('occ_date')
+    
     return retData
 
 def __joinDataTables(callsForServiceData:pd.DataFrame, weatherData:pd.DataFrame):
