@@ -6,11 +6,14 @@ def CleanData(rawData:dict[str, pd.DataFrame]) -> pd.DataFrame:
     print("Beginning the process of cleaning data...")
 
     # Interpolate
-    cfsData = rawData["callsForService"].copy()
+    callsForServiceData = rawData["callsForService"].copy()
     weatherData = DataInterpolator.InterpolateData(rawData["weather"].copy())
 
+    # Bin
+    binnedCallsForServiceData = __binData(callsForServiceData)
+
     # Merge
-    cleanData = __joinDataTables(cfsData, weatherData)
+    cleanData = __joinDataTables(binnedCallsForServiceData, weatherData)
 
     # Clean
     cleanData = __removeUnnecessaryColumns(cleanData)
@@ -20,6 +23,14 @@ def CleanData(rawData:dict[str, pd.DataFrame]) -> pd.DataFrame:
     print("Completed the process of cleaning data.")
 
     return cleanData
+
+def __binData(data:pd.DataFrame) -> pd.DataFrame:
+    print("Binning the data...")
+
+    # Bin by day, and then by case decription
+    retData = __cleanAllText(data)
+    retData = retData.groupby(['occ_date', 'CASE DESC']).size().reset_index(name='Case Count')    
+    return retData
 
 def __joinDataTables(callsForServiceData:pd.DataFrame, weatherData:pd.DataFrame):
     print("Merging data...")
@@ -37,8 +48,8 @@ def __removeUnnecessaryColumns(data:pd.DataFrame) -> pd.DataFrame:
 
     retData = data.copy()
     retData = retData.drop(columns=[
-        "x_coordinate", "y_coordinate", "census_tract", "STATION", "NAME",      # Values we don't care about
-        "PSUN", "TSUN", "PGTM"                                                  # Values not measured at the weather station
+        "STATION", "NAME",      # Values we don't care about
+        "PSUN", "TSUN", "PGTM"  # Values not measured at the weather station
     ])
 
     return retData

@@ -8,7 +8,7 @@ def __printOptions():
     print("Processing Options:")
     print("0 - Exit")
     print("1 - Import Raw Data")
-    print("2 - Clean, Interpolate, and Save Raw Data")
+    print("2 - Bin, Clean, Interpolate, and Save Raw Data")
     print("3 - Import Cleaned Data")
     print("4 - Normalize and Save Cleaned Data") 
     print("5 - Import Normalized Data")
@@ -35,7 +35,7 @@ if (__name__ == "__main__"):
         elif (userInput == '1'):
             rawData = DataLoader.ImportRawData()
 
-        # Clean, interpolate, combine, and save data
+        # Bin, clean, interpolate, combine, and save the data
         elif (userInput == '2'):
             if (not rawData or any(df.empty for df in rawData.values())):
                 print("No raw data has been previously loaded.")
