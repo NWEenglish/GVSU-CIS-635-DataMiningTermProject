@@ -15,9 +15,6 @@ def InterpolateCallsForServiceData(callsForServiceData:pd.DataFrame) -> pd.DataF
     # Merge to fill in missing values with 0
     retData = pd.merge(all_combinations, retData, on=['occ_date', 'CASE DESC'], how='left').fillna(0)
 
-
-    print("Completed the process of interpolating the Calls-for-Service data.")
-
     return retData
 
 def InterpolateWeatherData(weatherData:pd.DataFrame) -> pd.DataFrame:

@@ -53,6 +53,7 @@ def __removeUnnecessaryColumns(data:pd.DataFrame) -> pd.DataFrame:
     retData = retData.drop(columns=[
         "STATION", "NAME",              # Categorical attributes that are the same since we only use one weather station source
         "WDF2", "WDF5", "WSF2", "WSF5", # Numerical attributes that were measured, but we don't care about since we have the average already
+        "TMAX", "TMIN",                 # Since we've interpolated the temp averages, we'll remove the min/max temps
         "PSUN", "TSUN", "PGTM"          # Numerical attributes not measured at the weather station
     ])
 
