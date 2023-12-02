@@ -5,15 +5,18 @@ import DataInterpolator
 def CleanData(rawData:dict[str, pd.DataFrame]) -> pd.DataFrame:
     print("Beginning the process of cleaning data...")
 
-    # Interpolate
-    callsForServiceData = rawData["callsForService"].copy()
-    weatherData = DataInterpolator.InterpolateData(rawData["weather"].copy())
-
     # Bin
+    callsForServiceData = rawData["callsForService"].copy()
     binnedCallsForServiceData = __binData(callsForServiceData)
 
+    # Interpolate
+    interpolatedCallsForServiceData = DataInterpolator.InterpolateCallsForServiceData(binnedCallsForServiceData)
+    interpolatedWeatherData = DataInterpolator.InterpolateWeatherData(rawData["weather"].copy())
+
     # Merge
-    cleanData = __joinDataTables(binnedCallsForServiceData, weatherData)
+    cleanData = __joinDataTables(interpolatedCallsForServiceData, interpolatedWeatherData)
+
+    cleanData.to_csv('Test.csv')
 
     # Clean
     cleanData = __removeUnnecessaryColumns(cleanData)
@@ -48,8 +51,9 @@ def __removeUnnecessaryColumns(data:pd.DataFrame) -> pd.DataFrame:
 
     retData = data.copy()
     retData = retData.drop(columns=[
-        "STATION", "NAME",      # Values we don't care about
-        "PSUN", "TSUN", "PGTM"  # Values not measured at the weather station
+        "STATION", "NAME",              # Categorical attributes that are the same since we only use one weather station source
+        "WDF2", "WDF5", "WSF2", "WSF5", # Numerical attributes that were measured, but we don't care about since we have the average already
+        "PSUN", "TSUN", "PGTM"          # Numerical attributes not measured at the weather station
     ])
 
     return retData
