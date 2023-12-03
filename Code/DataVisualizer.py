@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import pandas as pd
+from sklearn import tree
 
 def GraphData(data:pd.DataFrame, caseType:str) -> None:
     print("Graphing the data...")
@@ -13,5 +14,9 @@ def GraphData(data:pd.DataFrame, caseType:str) -> None:
     plt.grid(True)
     plt.show()
 
-def DecisionTree() -> None:
+def DecisionTree(columns:[str], model:tree.DecisionTreeClassifier) -> None:
     print("Graphing the decision tree...")
+
+    plt.figure(figsize=(20, 10))
+    tree.plot_tree(model, feature_names=columns, class_names=model.classes_, filled=True, rounded=True)
+    plt.show()

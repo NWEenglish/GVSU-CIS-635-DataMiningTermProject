@@ -33,8 +33,8 @@ def __classifyCaseCount(data:pd.DataFrame, caseType:str) -> pd.DataFrame:
     aboveNormal = ((max - median) / 2) + median
     belowNormal = ((median - min) / 2) + min
 
-    retData.loc[(retData['CASE DESC'] == caseType) & (retData['Case Count'] > aboveNormal), 'Count Category'] = 1 # Above Normal
-    retData.loc[(retData['CASE DESC'] == caseType) & (retData['Case Count'] < belowNormal), 'Count Category'] = 0 # Below Normal
-    retData.loc[(retData['CASE DESC'] == caseType) & (retData['Case Count'] >= belowNormal) & (retData['Case Count'] <= aboveNormal), 'Count Category'] = .5 # About Normal
+    retData.loc[(retData['CASE DESC'] == caseType) & (retData['Case Count'] > aboveNormal), 'Count Category'] = 'Above Normal'
+    retData.loc[(retData['CASE DESC'] == caseType) & (retData['Case Count'] < belowNormal), 'Count Category'] = 'Below Normal'
+    retData.loc[(retData['CASE DESC'] == caseType) & (retData['Case Count'] >= belowNormal) & (retData['Case Count'] <= aboveNormal), 'Count Category'] = 'About Normal'
 
     return retData

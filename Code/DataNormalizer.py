@@ -16,9 +16,12 @@ def __normalizeData(data:pd.DataFrame) -> pd.DataFrame:
     print("Normalizing the data...")
     retData = data.copy()
 
-    # Using min max for numerical attributes
+    # Change CASE DESC from categorical to numerical code
+    retData['Case Desc Code'] = retData['CASE DESC'].cat.codes
+
+    # Using min-max for numerical attributes known to not be on the same scale
     minMaxScale = 1
-    for column in ['AWND', 'PRCP', 'SNOW', 'SNWD', 'TAVG']:
+    for column in ['Case Desc Code', 'AWND', 'PRCP', 'SNOW', 'SNWD', 'TAVG']:
         retData = __minMaxNormalizer(retData, column, minMaxScale)
 
     return retData
