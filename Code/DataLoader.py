@@ -13,14 +13,14 @@ def ImportRawData() -> dict[str, pd.DataFrame]:
 
 def ImportCleanData() -> pd.DataFrame:
     print("Beginning the process of importing clean data...")
-    cleanData = pd.read_csv(GlobalConfigs.CLEANED_DATA_FILEPATH)
+    cleanData = pd.read_csv(GlobalConfigs.CLEANED_DATA_FILEPATH).set_index('Date')
     print("Completed the process of importing clean data.")
 
     return cleanData
 
 def ImportNormalizedData() -> pd.DataFrame:
     print("Beginning the process of importing normalized data...")
-    normalizedData = pd.read_csv(GlobalConfigs.NORMALIZED_DATA_FILEPATH)
+    normalizedData = pd.read_csv(GlobalConfigs.NORMALIZED_DATA_FILEPATH).set_index('Date')
     print("Completed the process of importing normalized data.")
 
     return normalizedData

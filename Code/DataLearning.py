@@ -12,27 +12,33 @@ class LearnedModels():
 def LearnAndTest(data:pd.DataFrame) -> None:
     print("Beginning the process of learning the data...")
 
-    # Learn models
-    retModels = __learning(data)
+    caseTypes = data['CASE DESC'].unique()
+    retModels = {}
 
-    # Output graphs
-    DataVisualizer.DecisionTree(retModels.Columns, retModels.DecisionTree)
+    for caseType in caseTypes:
 
-    # Test models
+        # Learn models - might need to do per class
+        retModels[caseType] = __learning(data, caseType)
+
+        # Output graphs
+        DataVisualizer.DecisionTree(retModels[caseType].Columns, retModels[caseType].DecisionTree, caseType)
+
+        # Test models
 
     print("Completed the process of learning the data.")
 
 # Look at HW #3
 # Previously planned on using info gain, but realize since I want the tree anyways then using the decision tree model makes more sense.
-def __learning(dataToLearn:pd.DataFrame) -> LearnedModels:
-    print("Performing KNN and Decision Tree learning...")
+def __learning(dataToLearn:pd.DataFrame, caseType:str) -> LearnedModels:
+    print(f"Performing KNN and Decision Tree learning for '{caseType}'...")
     data = dataToLearn.copy()
+    data = data.loc[data['CASE DESC'] == caseType].reset_index(drop=True)
     retModels = LearnedModels
 
     # Setup K-folds
     skf = StratifiedKFold(n_splits=4, shuffle=True, random_state=retModels.stateValue)
     y = data['Count Category']
-    X = data.drop(columns=['Count Category', 'Date', 'CASE DESC']) # Includes more cleaning that had to come later
+    X = data.drop(columns=['Count Category', 'CASE DESC']) # Includes more cleaning that had to come later
     retModels.Columns = X.columns
 
     # Begin training models    

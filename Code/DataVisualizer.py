@@ -1,3 +1,4 @@
+import GlobalConfigs
 import matplotlib.pyplot as plt
 import pandas as pd
 from sklearn import tree
@@ -14,10 +15,9 @@ def GraphData(data:pd.DataFrame, caseType:str) -> None:
     plt.grid(True)
     plt.show()
 
-def DecisionTree(columns:[str], model:tree.DecisionTreeClassifier) -> None:
-    print("Graphing the decision tree...")
+def DecisionTree(columns:[str], model:tree.DecisionTreeClassifier, caseType:str) -> None:
+    print(f"Graphing the decision tree for '{caseType}'...")
 
     plt.figure(figsize=(40, 10))
     tree.plot_tree(model, feature_names=columns, class_names=model.classes_, filled=True, rounded=True)
-    # plt.show()
-    plt.savefig('decision_tree_plot.png', dpi=600)
+    plt.savefig(f'{GlobalConfigs.DECISION_TREE_GRAPHS_FILEPATH}{caseType}.png', dpi=600)

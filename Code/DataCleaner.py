@@ -3,8 +3,6 @@ import GlobalConfigs
 import DataBinning
 import DataInterpolator
 
-import DataVisualizer # DELETE
-
 def CleanData(rawData:dict[str, pd.DataFrame]) -> pd.DataFrame:
     print("Beginning the process of cleaning data...")
 
@@ -35,7 +33,7 @@ def __joinDataTables(callsForServiceData:pd.DataFrame, weatherData:pd.DataFrame)
     print("Merging data...")
 
     # Convert dates in data frames to a consistent format
-    callsForServiceData["occ_date"] = pd.to_datetime(callsForServiceData["occ_date"], format="%m/%d/%Y")
+    callsForServiceData["occ_date"] = pd.to_datetime(callsForServiceData["occ_date"], format="%m-%d-%Y")
     weatherData["DATE"] = pd.to_datetime(weatherData["DATE"], format="%Y-%m-%d")
 
     combinedData = callsForServiceData.set_index("occ_date").join(weatherData.set_index("DATE"), how="inner")
@@ -60,7 +58,12 @@ def __cleanAllText(data:pd.DataFrame) -> pd.DataFrame:
     print("Cleaning text values...")
     
     # Removes leading/trailing whitespace and unnecessary text
-    retData = data.copy().applymap(lambda x: x.strip().replace(" - COLD", '') if isinstance(x, str) else x)
+    retData = data.copy().applymap(lambda x: x.strip()
+                                   .replace(" - COLD", '')
+                                   .replace(" - PRIORITY", '')
+                                   .replace("&", 'AND')
+                                   .replace("/", '-')
+                                   .replace(" *H", '') if isinstance(x, str) else x)
     return retData
 
 def __saveCleanData(data:pd.DataFrame):
