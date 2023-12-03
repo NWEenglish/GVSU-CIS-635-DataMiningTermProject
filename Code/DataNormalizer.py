@@ -1,5 +1,6 @@
 import pandas as pd
 import GlobalConfigs
+from sklearn.preprocessing import MinMaxScaler
 
 def NormalizeData(cleanData:pd.DataFrame) -> pd.DataFrame:
     print("Beginning the process of normalizing the data...")
@@ -13,7 +14,24 @@ def NormalizeData(cleanData:pd.DataFrame) -> pd.DataFrame:
 
 def __normalizeData(data:pd.DataFrame) -> pd.DataFrame:
     print("Normalizing the data...")
-    retData = data.copy() # TODO: Add logic
+    retData = data.copy()
+
+    # Using min max for numerical attributes
+    minMaxScale = 1
+    for column in ['AWND', 'PRCP', 'SNOW', 'SNWD', 'TAVG']:
+        retData = __minMaxNormalizer(retData, column, minMaxScale)
+
+    return retData
+
+def __minMaxNormalizer(data:pd.DataFrame, column:str, scale:int) -> pd.DataFrame:
+    retData = data.copy()
+    
+    # If the range does not show we're in scale, then perform min-max
+    range = retData[column].max() - retData[column].min()
+    if range > scale:
+        minMaxScaler = MinMaxScaler()
+        retData[column] = minMaxScaler.fit_transform(retData[[column]])
+
     return retData
 
 def __saveNormalizedData(data:pd.DataFrame):

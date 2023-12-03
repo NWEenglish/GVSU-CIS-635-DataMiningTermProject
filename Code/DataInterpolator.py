@@ -1,32 +1,30 @@
 import pandas as pd
 
-def InterpolateData(weatherData:pd.DataFrame) -> pd.DataFrame:
-    print("Beginning the process of interpolating the data...")
+def InterpolateCallsForServiceData(callsForServiceData:pd.DataFrame) -> pd.DataFrame:
+    print("Beginning the process of interpolating the Calls-for-Service data...")
 
-    interpolatedData = __weatherDataInterpolation(weatherData)
+    retData = callsForServiceData.copy()
 
-    print("Completed the process of interpolating the data.")
+    # All unique dates and case types
+    allDates = retData['occ_date'].unique()
+    allCaseTypes = retData['CASE DESC'].unique()
 
-    return interpolatedData
+    # Ensure every combination of dates and case types have a value (default 0)
+    all_combinations = pd.DataFrame([(date, case_desc) for date in allDates for case_desc in allCaseTypes], columns=['occ_date', 'CASE DESC'])
 
-def __weatherDataInterpolation(weatherData:pd.DataFrame) -> pd.DataFrame:
-    print("Interpolating weather data...")
+    # Merge to fill in missing values with 0
+    retData = pd.merge(all_combinations, retData, on=['occ_date', 'CASE DESC'], how='left').fillna(0)
+
+    return retData
+
+def InterpolateWeatherData(weatherData:pd.DataFrame) -> pd.DataFrame:
+    print("Beginning the process of interpolating the Weather data...")
 
     retData = weatherData.copy()
-
-    # Below are all the fields that have missing weather data for, with a description of how we will resolve them.
 
     # TAVG - Average of hourly values - The weather station didn't start recording this until April 1, 2013. We'll assume it's the 
     # average of the max and min temp for that day.
     retData["TAVG"] = retData[["TMAX", "TMIN"]].mean(axis = 1).interpolate()
-
-    # WDF5 - Direction of fastest 5-second wind (degrees) - We'll assume it wouldn've been similar to the fastest 2-minute wind speed and so
-    # we will use the same value for that day.
-    retData["WDF5"] = retData["WDF2"].interpolate()
-
-    # WSF5 - Fastest 5-second wind speed (mph) - We'll assume it would have been at least the same as the fastest 2-min wind speed for that 
-    # day since that would've been at least the minimum value for the 5-second, but we can't possibly know the highest it could've been.
-    retData["WSF5"] = retData["WSF2"].interpolate()
 
     # WT** are flags for weather types. Value 1 represents that a given weather type was observed, but no value does not necessarily mean
     # the absence. However, for the purposes of this project, we will assume it not being observed means it did not happen.
