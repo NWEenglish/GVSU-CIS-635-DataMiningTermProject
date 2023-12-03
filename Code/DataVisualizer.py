@@ -6,7 +6,7 @@ def GraphData(data:pd.DataFrame, caseType:str) -> None:
 
     graphData = data[data['CASE DESC'] == caseType]
     plt.figure(figsize=(10, 6))
-    plt.plot(graphData['Date'], graphData['Case Count'], marker='o', linestyle='-', color='b')
+    plt.plot(graphData['Date'], graphData['Count Category'], marker='o', linestyle='-', color='b')
     plt.title(f'Daily Trend for {caseType}')
     plt.xlabel('Date')
     plt.ylabel('Count')
