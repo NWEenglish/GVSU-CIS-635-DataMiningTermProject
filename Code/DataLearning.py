@@ -6,7 +6,7 @@ from sklearn.model_selection import StratifiedKFold
 class LearnedModels():
     stateValue:int = 616
     KnnModel = neighbors.KNeighborsClassifier()
-    DecisionTree = tree.DecisionTreeClassifier()
+    DecisionTree = tree.DecisionTreeClassifier(max_depth=10)
     Columns = [str]
 
 def LearnAndTest(data:pd.DataFrame) -> None:
@@ -31,8 +31,8 @@ def __learning(dataToLearn:pd.DataFrame) -> LearnedModels:
 
     # Setup K-folds
     skf = StratifiedKFold(n_splits=4, shuffle=True, random_state=retModels.stateValue)
-    y = data['Count Category'].reset_index(drop=True)
-    X = data.drop(columns=['Count Category', 'Date', 'CASE DESC']).reset_index(drop=True) # Includes more cleaning that had to come later
+    y = data['Count Category']
+    X = data.drop(columns=['Count Category', 'Date', 'CASE DESC']) # Includes more cleaning that had to come later
     retModels.Columns = X.columns
 
     # Begin training models    

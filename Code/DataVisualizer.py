@@ -17,6 +17,7 @@ def GraphData(data:pd.DataFrame, caseType:str) -> None:
 def DecisionTree(columns:[str], model:tree.DecisionTreeClassifier) -> None:
     print("Graphing the decision tree...")
 
-    plt.figure(figsize=(20, 10))
+    plt.figure(figsize=(40, 10))
     tree.plot_tree(model, feature_names=columns, class_names=model.classes_, filled=True, rounded=True)
-    plt.show()
+    # plt.show()
+    plt.savefig('decision_tree_plot.png', dpi=600)
