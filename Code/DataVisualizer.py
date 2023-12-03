@@ -12,3 +12,6 @@ def GraphData(data:pd.DataFrame, caseType:str) -> None:
     plt.ylabel('Count')
     plt.grid(True)
     plt.show()
+
+def DecisionTree() -> None:
+    print("Graphing the decision tree...")

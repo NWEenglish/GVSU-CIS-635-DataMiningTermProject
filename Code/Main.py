@@ -13,7 +13,8 @@ def __printOptions():
     print("3 - Import Cleaned Data")
     print("4 - Normalize and Save Cleaned Data") 
     print("5 - Import Normalized Data")
-    print("6 - Learn KNN and Information Gain")
+    print("6 - Learn and Test KNN and Decision Trees models")
+    print("7 - Perform Correlation Analysis (x^2)")
     print('')
 
 def getInput():
@@ -59,8 +60,15 @@ if (__name__ == "__main__"):
         elif (userInput == '5'):
             normalizedData = DataLoader.ImportNormalizedData()
 
-        # Perform KNN and Information Gain
+        # Learn and Test KNN and Decision Tree models
         elif (userInput == '6'):
+            if (normalizedData.empty):
+                print("No normalized data has been previously loaded.")
+            else :
+                DataLearning.Learn(normalizedData)
+
+        # Perform Correlation Analysis (x^2)
+        elif (userInput == '7'):
             if (normalizedData.empty):
                 print("No normalized data has been previously loaded.")
             else :

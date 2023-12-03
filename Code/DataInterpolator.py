@@ -9,7 +9,7 @@ def InterpolateCallsForServiceData(callsForServiceData:pd.DataFrame) -> pd.DataF
     allDates = retData['occ_date'].unique()
     allCaseTypes = retData['CASE DESC'].unique()
 
-    # Ensure every combination of dates and case types have a value (default 0)
+    # Ensure every combination of dates and case types have a value; for class balance
     all_combinations = pd.DataFrame([(date, case_desc) for date in allDates for case_desc in allCaseTypes], columns=['occ_date', 'CASE DESC'])
 
     # Merge to fill in missing values with 0
