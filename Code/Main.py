@@ -13,8 +13,10 @@ def __printOptions():
     print("3 - Import Cleaned Data")
     print("4 - Normalize and Save Cleaned Data") 
     print("5 - Import Normalized Data")
-    print("6 - Learn and Test KNN and Decision Trees models")
-    print("7 - Perform Correlation Analysis (x^2)")
+    print("6 - Learn KNN and Decision Trees models")
+    print("7 - Graph KNN and Decision Trees models")
+    print("8 - Test KNN and Decision Trees models")
+    print("9 - Perform Correlation Analysis (x^2)")
     print('')
 
 def getInput():
@@ -22,9 +24,10 @@ def getInput():
 
 if (__name__ == "__main__"):
     userInput:str = None
-    rawData = dict[str, pd.DataFrame]
+    rawData = {}
     cleanData = pd.DataFrame()
     normalizedData = pd.DataFrame()
+    learnedData = {}
 
     while (True):
         __printOptions()
@@ -60,15 +63,29 @@ if (__name__ == "__main__"):
         elif (userInput == '5'):
             normalizedData = DataLoader.ImportNormalizedData()
 
-        # Learn and Test KNN and Decision Tree models
+        # Learn KNN and Decision Tree models
         elif (userInput == '6'):
             if (normalizedData.empty):
                 print("No normalized data has been previously loaded.")
             else :
-                DataLearning.LearnAndTest(normalizedData)
+                learnedData = DataLearning.Learn(normalizedData)
+
+        # Graph KNN and Decision Tree models
+        elif (userInput == '7'):
+            if (not learnedData):
+                print("No data has been previously learned.")
+            else :
+                DataLearning.Graph(learnedData)
+
+        # Test KNN and Decision Tree models
+        elif (userInput == '8'):
+            if (not learnedData):
+                print("No data has been previously learned.")
+            else :
+                DataLearning.Test(learnedData)
 
         # Perform Correlation Analysis (x^2)
-        # elif (userInput == '7'):
+        # elif (userInput == '9'):
         #     if (normalizedData.empty):
         #         print("No normalized data has been previously loaded.")
         #     else :
