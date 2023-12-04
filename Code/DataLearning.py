@@ -1,8 +1,8 @@
 import DataVisualizer
-import gc
+import numpy as np
 import pandas as pd
 from sklearn import neighbors, tree
-from sklearn.model_selection import StratifiedKFold
+from sklearn.model_selection import StratifiedKFold, cross_val_score
 
 class LearnedModels():
     stateValue:int = 616
@@ -16,17 +16,17 @@ class LearnedModels():
         self.Columns = [str]
 
 
-def Learn(data:pd.DataFrame) -> dict[str, LearnedModels]:
-    print("Beginning the process of learning the data...")
+def LearnAndTest(data:pd.DataFrame) -> dict[str, LearnedModels]:
+    print("Beginning the process of learning and testing the data...")
 
     retLearnedModels = {}
     caseTypes = data['CASE DESC'].unique()
     caseTypes.sort()
 
     for caseType in caseTypes:
-        retLearnedModels[caseType] = __learning(data, caseType)
+        retLearnedModels[caseType] = __learningAndTesting(data, caseType)
 
-    print("Completed the process of learning the data.")
+    print("Completed the process of learning and testing the data.")
     return retLearnedModels
 
 def Graph(models:dict[str, LearnedModels]) -> None:
@@ -38,14 +38,11 @@ def Graph(models:dict[str, LearnedModels]) -> None:
 
     print("Completed the process of graphing the models.")
 
-def Test(data:pd.DataFrame) -> None:
-    print("TODO TESTING")
-
 def CorrelationAnalysis(data:pd.DataFrame) -> None:
     print("TODO x^2")
 
 # Previously planned on using info gain, but realize since I want the tree anyways then using the decision tree model makes more sense.
-def __learning(dataToLearn:pd.DataFrame, caseType:str) -> LearnedModels:
+def __learningAndTesting(dataToLearn:pd.DataFrame, caseType:str) -> LearnedModels:
     print(f"Performing KNN and Decision Tree learning for '{caseType}'...")
     data = dataToLearn.copy()
     data = data.loc[data['CASE DESC'] == caseType].reset_index(drop=True)
@@ -65,11 +62,29 @@ def __learning(dataToLearn:pd.DataFrame, caseType:str) -> LearnedModels:
         retModels.KnnModel.fit(X_train, y_train)
         retModels.DecisionTree.fit(X_train, y_train)
 
-    return retModels
+    # Test the trained models
+    print(f"Performing KNN and Decision Tree testing for '{caseType}'...")
 
-# Look at HW #3
-def __testModels(data:pd.DataFrame) -> None:
-    print("Beginning the process of testing the learned models...")
+    # Change scoring since classes will be in-balanced
+    knnScoresF1 = cross_val_score(retModels.KnnModel, X, y, cv=skf.get_n_splits(), scoring='f1_micro')
+    knnScoresRocAuc = cross_val_score(retModels.KnnModel, X, y, cv=skf.get_n_splits(), scoring='roc_auc_ovr')
+
+    decisionTreeScoresF1 = cross_val_score(retModels.DecisionTree, X, y, cv=skf.get_n_splits(), scoring='f1_micro')
+    decisionTreeScoresRocAuc = cross_val_score(retModels.DecisionTree, X, y, cv=skf.get_n_splits(), scoring='roc_auc_ovr')
+
+    formatting = '.3f'
+
+    # K-Nearest Neighbors (KNN)
+    print("K-Nearest Neighbors (KNN)")
+    print(f"F1: {format(np.mean(knnScoresF1), formatting)} +/- {format(np.std(knnScoresF1), formatting)}")
+    print(f"ROC-AUC: {format(np.mean(knnScoresRocAuc), formatting)} +/- {format(np.std(knnScoresRocAuc), formatting)}")
+
+    # Decision Tree
+    print("Decision Tree")
+    print(f"F1: {format(np.mean(decisionTreeScoresF1), formatting)} +/- {format(np.std(decisionTreeScoresF1), formatting)}")
+    print(f"ROC-AUC: {format(np.mean(decisionTreeScoresRocAuc), formatting)} +/- {format(np.std(decisionTreeScoresRocAuc), formatting)}")
+
+    return retModels
 
 # Look at HW #2
 def __correlationAnalysis(data:pd.DataFrame) -> None:
