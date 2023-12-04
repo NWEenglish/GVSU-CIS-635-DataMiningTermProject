@@ -16,7 +16,7 @@ def __normalizeData(data:pd.DataFrame) -> pd.DataFrame:
     print("Normalizing the data...")
     retData = data.copy()
 
-    # Using min max for numerical attributes
+    # Using min-max for numerical attributes known to not be on the same scale
     minMaxScale = 1
     for column in ['AWND', 'PRCP', 'SNOW', 'SNWD', 'TAVG']:
         retData = __minMaxNormalizer(retData, column, minMaxScale)
