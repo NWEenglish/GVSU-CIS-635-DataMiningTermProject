@@ -7,13 +7,14 @@ from sklearn.model_selection import StratifiedKFold, cross_val_score
 class LearnedModels():
     stateValue:int = 616
     KnnModel = None
+    KnnModelScore = 0
     DecisionTree = None
-    Columns = None
+    DecisionTreeScore = 0
+    Columns = [str]
 
     def __init__(self):
         self.KnnModel = neighbors.KNeighborsClassifier()
-        self.DecisionTree = tree.DecisionTreeClassifier(max_depth=9)
-        self.Columns = [str]
+        self.DecisionTree = tree.DecisionTreeClassifier(max_depth=5)
 
 
 def LearnAndTest(data:pd.DataFrame) -> dict[str, LearnedModels]:
@@ -66,23 +67,10 @@ def __learningAndTesting(dataToLearn:pd.DataFrame, caseType:str) -> LearnedModel
     print(f"Performing KNN and Decision Tree testing for '{caseType}'...")
 
     # Change scoring since classes will be in-balanced
-    knnScoresF1 = cross_val_score(retModels.KnnModel, X, y, cv=skf.get_n_splits(), scoring='f1_micro')
-    knnScoresRocAuc = cross_val_score(retModels.KnnModel, X, y, cv=skf.get_n_splits(), scoring='roc_auc_ovr')
+    retModels.KnnModelScore = np.mean(cross_val_score(retModels.KnnModel, X, y, cv=skf.get_n_splits(), scoring='f1_micro'))
+    retModels.DecisionTreeScore = np.mean(cross_val_score(retModels.DecisionTree, X, y, cv=skf.get_n_splits(), scoring='f1_micro'))
 
-    decisionTreeScoresF1 = cross_val_score(retModels.DecisionTree, X, y, cv=skf.get_n_splits(), scoring='f1_micro')
-    decisionTreeScoresRocAuc = cross_val_score(retModels.DecisionTree, X, y, cv=skf.get_n_splits(), scoring='roc_auc_ovr')
-
-    formatting = '.3f'
-
-    # K-Nearest Neighbors (KNN)
-    print("K-Nearest Neighbors (KNN)")
-    print(f"F1: {format(np.mean(knnScoresF1), formatting)} +/- {format(np.std(knnScoresF1), formatting)}")
-    print(f"ROC-AUC: {format(np.mean(knnScoresRocAuc), formatting)} +/- {format(np.std(knnScoresRocAuc), formatting)}")
-
-    # Decision Tree
-    print("Decision Tree")
-    print(f"F1: {format(np.mean(decisionTreeScoresF1), formatting)} +/- {format(np.std(decisionTreeScoresF1), formatting)}")
-    print(f"ROC-AUC: {format(np.mean(decisionTreeScoresRocAuc), formatting)} +/- {format(np.std(decisionTreeScoresRocAuc), formatting)}")
+    print(f"Scores for {caseType} -> KNN = {retModels.KnnModelScore}; Decision Tree = {retModels.DecisionTreeScore}")
 
     return retModels
 
