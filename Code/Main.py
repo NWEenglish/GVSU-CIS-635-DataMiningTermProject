@@ -77,11 +77,11 @@ if (__name__ == "__main__"):
                 DataLearning.Graph(learnedData)
 
         # Perform Correlation Analysis (x^2)
-        # elif (userInput == '8'):
-        #     if (normalizedData.empty):
-        #         print("No normalized data has been previously loaded.")
-        #     else :
-        #         DataLearning.LearnAndTest(normalizedData)
+        elif (userInput == '8'):
+            if (normalizedData.empty):
+                print("No normalized data has been previously loaded.")
+            else :
+                DataLearning.CorrelationAnalysis(normalizedData)
 
         # Unknown input
         else:

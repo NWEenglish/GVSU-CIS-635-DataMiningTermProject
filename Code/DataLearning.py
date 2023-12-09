@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd
 from sklearn import neighbors, tree
 from sklearn.model_selection import StratifiedKFold, cross_val_score
+from scipy.stats import chi2_contingency
 
 class LearnedModels():
     stateValue:int = 616
@@ -40,7 +41,16 @@ def Graph(models:dict[str, LearnedModels]) -> None:
     print("Completed the process of graphing the models.")
 
 def CorrelationAnalysis(data:pd.DataFrame) -> None:
-    print("TODO x^2")
+    print("Beginning the process of finding correlations in the data...")
+
+    retLearnedModels = {}
+    caseTypes = data['CASE DESC'].unique()
+    caseTypes.sort()
+
+    for caseType in caseTypes:
+        __correlationAnalysis(data, caseType)
+
+    print("Completed the process of finding correlations in the data.")
 
 # Previously planned on using info gain, but realize since I want the tree anyways then using the decision tree model makes more sense.
 def __learningAndTesting(dataToLearn:pd.DataFrame, caseType:str) -> LearnedModels:
@@ -74,6 +84,33 @@ def __learningAndTesting(dataToLearn:pd.DataFrame, caseType:str) -> LearnedModel
 
     return retModels
 
-# Look at HW #2
-def __correlationAnalysis(data:pd.DataFrame) -> None:
-    print("Performing correlation analysis with x^2...")
+def __correlationAnalysis(data:pd.DataFrame, caseType:str) -> None:
+    print(f"Performing correlation analysis for {caseType}...")
+    
+    thisData = data.copy()
+    thisData = thisData.loc[data['CASE DESC'] == caseType].reset_index(drop=True)
+
+    pValues:dict = {}
+
+    # Categorical output values
+    countCategories = ['Below Normal', 'About Normal', 'Above Normal']
+
+    # Continuous values will use Pearson for correlation analysis
+    contColumns = ['AWND', 'PRCP','SNOW','SNWD', 'TAVG']
+
+    __chi2Test(thisData, caseType)
+
+    return pValues
+    
+def __chi2Test(data:pd.DataFrame, caseType:str):
+    significanceThreshold = 0.05
+
+    # Weather Type columns will use chi2 test for correlation analysis since they have binary outputs
+    wtColumns = ['WT01', 'WT02', 'WT03', 'WT04', 'WT05', 'WT06', 'WT08', 'WT09', 'WT10', 'WT13', 'WT14', 'WT16', 'WT18', 'WT21', 'WT22']
+
+    for weatherType in wtColumns:
+        contingencyTable = pd.crosstab(data['Count Category'], data[weatherType])
+        chi2Result = chi2_contingency(observed=contingencyTable)
+
+        if (chi2Result.pvalue <= significanceThreshold):
+            print(f'Results suggest a significant relationship between {caseType} and {weatherType}. | {chi2Result.pvalue} <= {significanceThreshold}')
