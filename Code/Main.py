@@ -15,7 +15,7 @@ def __printOptions():
     print("5 - Import Normalized Data")
     print("6 - Learn and Test KNN and Decision Trees models")
     print("7 - Graph KNN and Decision Trees models")
-    print("8 - Perform Correlation Analysis (x^2)")
+    print("8 - Perform Correlation Analysis")
     print('')
 
 def getInput():

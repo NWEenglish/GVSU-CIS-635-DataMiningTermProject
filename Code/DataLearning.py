@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 from sklearn import neighbors, tree
 from sklearn.model_selection import StratifiedKFold, cross_val_score
-from scipy.stats import chi2_contingency
+from scipy.stats import chi2_contingency, pearsonr
 
 class LearnedModels():
     stateValue:int = 616
@@ -43,7 +43,6 @@ def Graph(models:dict[str, LearnedModels]) -> None:
 def CorrelationAnalysis(data:pd.DataFrame) -> None:
     print("Beginning the process of finding correlations in the data...")
 
-    retLearnedModels = {}
     caseTypes = data['CASE DESC'].unique()
     caseTypes.sort()
 
@@ -90,25 +89,28 @@ def __correlationAnalysis(data:pd.DataFrame, caseType:str) -> None:
     thisData = data.copy()
     thisData = thisData.loc[data['CASE DESC'] == caseType].reset_index(drop=True)
 
-    pValues:dict = {}
-
-    # Categorical output values
-    countCategories = ['Below Normal', 'About Normal', 'Above Normal']
+    __continuousWeatherCorrelationAnalysis(thisData, caseType)
+    __weatherTypeCorrelationAnalysis(thisData, caseType)
+    
+def __continuousWeatherCorrelationAnalysis(data:pd.DataFrame, caseType:str):
+    thisData = data.copy()
+    thisData['Count Category'] = thisData['Count Category'].astype('category').cat.codes
+    significanceThreshold = 0.05
 
     # Continuous values will use Pearson for correlation analysis
-    contColumns = ['AWND', 'PRCP','SNOW','SNWD', 'TAVG']
+    for weatherColumn in ['AWND', 'PRCP','SNOW','SNWD', 'TAVG']:
+        correlation, pValue = pearsonr(thisData[weatherColumn], thisData['Count Category'])
 
-    __chi2Test(thisData, caseType)
+        # correlation, pValue = thisData[weatherColumn].corr(thisData['Count Category'], method='pearson')
 
-    return pValues
-    
-def __chi2Test(data:pd.DataFrame, caseType:str):
+        if (pValue <= significanceThreshold):
+            print(f'Results suggest a significant relationship between {caseType} and {weatherColumn}. | {pValue} <= {significanceThreshold}')
+
+def __weatherTypeCorrelationAnalysis(data:pd.DataFrame, caseType:str):
     significanceThreshold = 0.05
 
     # Weather Type columns will use chi2 test for correlation analysis since they have binary outputs
-    wtColumns = ['WT01', 'WT02', 'WT03', 'WT04', 'WT05', 'WT06', 'WT08', 'WT09', 'WT10', 'WT13', 'WT14', 'WT16', 'WT18', 'WT21', 'WT22']
-
-    for weatherType in wtColumns:
+    for weatherType in ['WT01', 'WT02', 'WT03', 'WT04', 'WT05', 'WT06', 'WT08', 'WT09', 'WT10', 'WT13', 'WT14', 'WT16', 'WT18', 'WT21', 'WT22']:
         contingencyTable = pd.crosstab(data['Count Category'], data[weatherType])
         chi2Result = chi2_contingency(observed=contingencyTable)
 
