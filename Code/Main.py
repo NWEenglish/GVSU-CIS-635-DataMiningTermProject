@@ -15,7 +15,7 @@ def __printOptions():
     print("5 - Import Normalized Data")
     print("6 - Learn and Test KNN and Decision Trees models")
     print("7 - Graph KNN and Decision Trees models")
-    print("8 - Perform Correlation Analysis (x^2)")
+    print("8 - Perform Correlation Analysis")
     print('')
 
 def getInput():
@@ -77,11 +77,11 @@ if (__name__ == "__main__"):
                 DataLearning.Graph(learnedData)
 
         # Perform Correlation Analysis (x^2)
-        # elif (userInput == '8'):
-        #     if (normalizedData.empty):
-        #         print("No normalized data has been previously loaded.")
-        #     else :
-        #         DataLearning.LearnAndTest(normalizedData)
+        elif (userInput == '8'):
+            if (normalizedData.empty):
+                print("No normalized data has been previously loaded.")
+            else :
+                DataLearning.CorrelationAnalysis(normalizedData)
 
         # Unknown input
         else:
