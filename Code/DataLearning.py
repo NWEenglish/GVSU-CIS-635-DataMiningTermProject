@@ -1,4 +1,5 @@
 import DataVisualizer
+import GlobalConfigs
 import numpy as np
 import pandas as pd
 from sklearn import neighbors, tree
@@ -46,8 +47,15 @@ def CorrelationAnalysis(data:pd.DataFrame) -> None:
     caseTypes = data['CASE DESC'].unique()
     caseTypes.sort()
 
+    correlationTable = pd.DataFrame(columns=data.columns)
+    correlationTable['CASE DESC'] = caseTypes
+    correlationTable.set_index('CASE DESC', inplace=True)
+    correlationTable.drop(columns=['Count Category'], inplace=True)
+
     for caseType in caseTypes:
-        __correlationAnalysis(data, caseType)
+        __correlationAnalysis(data, caseType, correlationTable)
+
+    correlationTable.to_csv(GlobalConfigs.CORRELATION_ANALYSIS_FILEPATH)
 
     print("Completed the process of finding correlations in the data.")
 
@@ -83,16 +91,16 @@ def __learningAndTesting(dataToLearn:pd.DataFrame, caseType:str) -> LearnedModel
 
     return retModels
 
-def __correlationAnalysis(data:pd.DataFrame, caseType:str) -> None:
+def __correlationAnalysis(data:pd.DataFrame, caseType:str, correlationTable:pd.DataFrame) -> None:
     print(f"Performing correlation analysis for {caseType}...")
     
     thisData = data.copy()
     thisData = thisData.loc[data['CASE DESC'] == caseType].reset_index(drop=True)
 
-    __continuousWeatherCorrelationAnalysis(thisData, caseType)
-    __weatherTypeCorrelationAnalysis(thisData, caseType)
+    __continuousWeatherCorrelationAnalysis(thisData, caseType, correlationTable)
+    __weatherTypeCorrelationAnalysis(thisData, caseType, correlationTable)
     
-def __continuousWeatherCorrelationAnalysis(data:pd.DataFrame, caseType:str):
+def __continuousWeatherCorrelationAnalysis(data:pd.DataFrame, caseType:str, correlationTable:pd.DataFrame):
     thisData = data.copy()
     thisData['Count Category'] = thisData['Count Category'].astype('category').cat.codes
     significanceThreshold = 0.05
@@ -101,12 +109,11 @@ def __continuousWeatherCorrelationAnalysis(data:pd.DataFrame, caseType:str):
     for weatherColumn in ['AWND', 'PRCP','SNOW','SNWD', 'TAVG']:
         correlation, pValue = pearsonr(thisData[weatherColumn], thisData['Count Category'])
 
-        # correlation, pValue = thisData[weatherColumn].corr(thisData['Count Category'], method='pearson')
-
         if (pValue <= significanceThreshold):
+            correlationTable.at[caseType, weatherColumn] = 'X'
             print(f'Results suggest a significant relationship between {caseType} and {weatherColumn}. | {pValue} <= {significanceThreshold}')
 
-def __weatherTypeCorrelationAnalysis(data:pd.DataFrame, caseType:str):
+def __weatherTypeCorrelationAnalysis(data:pd.DataFrame, caseType:str, correlationTable:pd.DataFrame):
     significanceThreshold = 0.05
 
     # Weather Type columns will use chi2 test for correlation analysis since they have binary outputs
@@ -115,4 +122,5 @@ def __weatherTypeCorrelationAnalysis(data:pd.DataFrame, caseType:str):
         chi2Result = chi2_contingency(observed=contingencyTable)
 
         if (chi2Result.pvalue <= significanceThreshold):
+            correlationTable.at[caseType, weatherType] = 'X'
             print(f'Results suggest a significant relationship between {caseType} and {weatherType}. | {chi2Result.pvalue} <= {significanceThreshold}')
