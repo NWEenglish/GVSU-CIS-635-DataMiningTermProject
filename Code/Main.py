@@ -9,13 +9,13 @@ def __printOptions():
     print("Processing Options:")
     print("0 - Exit")
     print("1 - Import Raw Data")
-    print("2 - Bin, Clean, Interpolate, and Save Raw Data")
+    print("2 - Pre-Procssing | Bin, Clean, Interpolate, and Save Raw Data")
     print("3 - Import Cleaned Data")
-    print("4 - Normalize and Save Cleaned Data") 
+    print("4 - Data Transformation | Normalize and Save Cleaned Data") 
     print("5 - Import Normalized Data")
-    print("6 - Learn and Test KNN and Decision Trees models")
-    print("7 - Graph KNN and Decision Trees models")
-    print("8 - Perform Correlation Analysis")
+    print("6 - Data Mining | Learn and Test KNN and Decision Trees models")
+    print("7 - Pattern Evaluation | Graph the Decision Trees models")
+    print("8 - Data Mining | Perform Correlation Analysis")
     print('')
 
 def getInput():
