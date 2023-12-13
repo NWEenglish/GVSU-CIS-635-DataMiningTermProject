@@ -29,6 +29,11 @@ def LearnAndTest(data:pd.DataFrame) -> dict[str, LearnedModels]:
     for caseType in caseTypes:
         retLearnedModels[caseType] = __learningAndTesting(data, caseType)
 
+    # Find average model scores
+    knnAverageScore = sum(model.KnnModelScore for model in retLearnedModels.values()) / len(retLearnedModels)
+    dtAverageScore = sum(model.DecisionTreeScore for model in retLearnedModels.values()) / len(retLearnedModels)
+    print(f"Average KNN Score: {knnAverageScore}\nAverage Decision Tree Score: {dtAverageScore}")
+
     print("Completed the process of learning and testing the data.")
     return retLearnedModels
 
